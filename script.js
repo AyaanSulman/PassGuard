@@ -334,6 +334,18 @@ class PassGuard {
             textInput.focus();
             textInput.addEventListener('input', (e) => {
                 this.qnaAnswers[question.id] = e.target.value;
+                this.updateNavigationButtons(); // Update buttons when typing
+            });
+            
+            // Also update on Enter key
+            textInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && this.qnaAnswers[question.id] && this.qnaAnswers[question.id].trim() !== '') {
+                    if (this.currentQuestionIndex === this.questions.length - 1) {
+                        this.generatePersonalizedPassword();
+                    } else {
+                        this.nextQuestion();
+                    }
+                }
             });
         }
     }
@@ -351,6 +363,22 @@ class PassGuard {
         });
 
         this.updateNavigationButtons();
+        
+        // Auto-advance after selection (optional - makes it smoother)
+        setTimeout(() => {
+            if (this.currentQuestionIndex === this.questions.length - 1) {
+                // Last question - show generate button
+                const generateButton = document.getElementById('generatePassword');
+                if (generateButton) {
+                    generateButton.style.display = 'inline-flex';
+                }
+            } else {
+                // Auto-advance to next question after 1 second
+                setTimeout(() => {
+                    this.nextQuestion();
+                }, 1000);
+            }
+        }, 100);
     }
 
     updateNavigationButtons() {
@@ -358,12 +386,20 @@ class PassGuard {
         const nextButton = document.getElementById('nextQuestion');
         const generateButton = document.getElementById('generatePassword');
 
+        if (!prevButton || !nextButton || !generateButton) {
+            console.error('Navigation buttons not found');
+            return;
+        }
+
         // Show/hide previous button
         prevButton.style.display = this.currentQuestionIndex > 0 ? 'inline-flex' : 'none';
 
         // Show/hide next/generate buttons
         const isLastQuestion = this.currentQuestionIndex === this.questions.length - 1;
-        const hasAnswer = this.qnaAnswers[this.questions[this.currentQuestionIndex].id];
+        const currentQuestion = this.questions[this.currentQuestionIndex];
+        const hasAnswer = this.qnaAnswers[currentQuestion.id] && this.qnaAnswers[currentQuestion.id].trim() !== '';
+
+        console.log('Current question:', this.currentQuestionIndex, 'Has answer:', hasAnswer, 'Is last:', isLastQuestion);
 
         if (isLastQuestion) {
             nextButton.style.display = 'none';
@@ -371,6 +407,14 @@ class PassGuard {
         } else {
             nextButton.style.display = hasAnswer ? 'inline-flex' : 'none';
             generateButton.style.display = 'none';
+        }
+
+        // Always show Next button initially to allow progression
+        if (!hasAnswer && this.currentQuestionIndex === 0) {
+            nextButton.style.display = 'inline-flex';
+            nextButton.textContent = 'Skip';
+        } else if (hasAnswer) {
+            nextButton.textContent = 'Next';
         }
     }
 
