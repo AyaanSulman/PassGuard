@@ -1,82 +1,84 @@
-# 🛡️ PassGuard - Password Strength Checker
+# 🛡️ PassGuard - Advanced Password Strength Checker
 
-A comprehensive, responsive web application that helps users create strong, memorable passwords with real-time security analysis.
+<div align="center">
+
+![PassGuard Logo](https://img.shields.io/badge/🛡️-PassGuard-6366f1?style=for-the-badge&labelColor=4f46e5)
+
+**A modern, intelligent web application for password strength analysis and secure password generation**
+
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](#)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)](#)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](#)
+[![Responsive](https://img.shields.io/badge/Responsive-✅-green?style=flat-square)](#)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=flat-square)](#)
+
+[🚀 Live Demo](#installation) • [📖 Documentation](#usage) • [🤝 Contributing](#contributing)
+
+</div>
+
+---
 
 ## ✨ Features
 
-### 🔍 Real-time Password Analysis
-- **Strength Meter**: Visual progress bar with color-coded feedback
-- **Security Score**: Powered by the zxcvbn library for accurate strength assessment
-- **Emoji Feedback**: Fun visual indicators (🔴 Very Weak → 🟢 Strong)
-- **Crack Time Estimation**: Shows how long it would take to crack your password
+### 🔍 **Real-Time Password Analysis**
+- **Industry-Standard Assessment** using zxcvbn library (used by Dropbox, WordPress, etc.)
+- **Visual Feedback System** with color-coded strength meters and emoji indicators
+- **Crack Time Estimation** showing realistic attack scenarios
+- **Breach Detection** via HaveIBeenPwned API with privacy-preserving k-anonymity
+- **Actionable Suggestions** for password improvement
 
-### 🚨 Breach Detection
-- **HaveIBeenPwned Integration**: Checks if your password has been compromised in data breaches
-- **Privacy-First**: Uses k-anonymity to protect your password during checks
-- **Real-time Warnings**: Instant alerts if your password has been breached
+### 🎯 **Intelligent Password Builder**
+- **Personalized Q&A System** with 7 carefully crafted questions
+- **4 Password Variations** for each user profile:
+  - 🔹 **Simple Combination** - Clean, readable format
+  - 🔹 **Separated Format** - Enhanced with separators for memorability
+  - 🔹 **Mixed Case** - Strategic capitalization with numbers
+  - 🔹 **Leetspeak Version** - Advanced character substitution (a→4, e→3, etc.)
+- **Smart Generation Algorithm** combining personal elements with cryptographic randomness
+- **Strength Preview** for each generated password option
 
-### 🧠 Interactive Password Builder
-- **Personalized Q&A**: 7-question survey to create memorable passwords
-- **Smart Generation**: Combines your answers into strong, unique passwords
-- **Memory Aids**: Explains how your password was created for easy recall
-- **One-click Testing**: Test generated passwords immediately
+### 🎨 **Premium User Experience**
+- **Fully Responsive Design** - Perfect on desktop, tablet, and mobile
+- **Dark Mode Support** with automatic system preference detection
+- **Smooth Animations** and micro-interactions
+- **Keyboard Shortcuts** (Ctrl/Cmd+K to focus, Escape to clear, Enter to navigate)
+- **Accessibility First** with ARIA labels and keyboard navigation
+- **Progressive Web App** capabilities
 
-### 🎨 Modern UI/UX
-- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
-- **Smooth Animations**: Engaging transitions and micro-interactions
-- **Dark Mode Support**: Automatic dark/light theme detection
-- **Accessibility**: Keyboard shortcuts and screen reader friendly
+### 🔒 **Privacy & Security**
+- **Zero Data Storage** - Everything processed locally
+- **No Server Dependencies** - Works completely offline after initial load
+- **K-Anonymity Protection** - Breach checking without exposing your password
+- **CSP Headers Ready** - Content Security Policy compliant
 
-### 🔧 Additional Features
-- **Password Visibility Toggle**: Show/hide password with eye icon
-- **Copy to Clipboard**: One-click password copying
-- **Security Tips**: Educational content about password best practices
-- **Loading States**: Visual feedback during API calls
-- **Easter Eggs**: Hidden surprises for curious users! 🎉
+---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### Prerequisites
-- Modern web browser with JavaScript enabled
-- Internet connection (for breach checking and external libraries)
+### Option 1: Local Development
+```bash
+# Clone the repository
+git clone https://github.com/AyaanSulman/PassGuard.git
+cd PassGuard
 
-### Installation
-1. Clone or download the repository
-2. Open `index.html` in your web browser
-3. Start creating secure passwords!
+# Start local server (choose one)
+python -m http.server 8000        # Python 3
+python -m SimpleHTTPServer 8000   # Python 2
+npx http-server                   # Node.js
+php -S localhost:8000             # PHP
 
-### Files Structure
+# Open browser
+open http://localhost:8000
 ```
-PassGuard/
-├── index.html          # Main HTML structure
-├── styles.css          # Responsive CSS with animations
-├── script.js           # JavaScript functionality
-└── README.md          # This file
-```
 
-## 🔒 Security & Privacy
+### Option 2: Direct File Access
+```bash
+# Download and extract
+wget https://github.com/AyaanSulman/PassGuard/archive/main.zip
+unzip main.zip
+cd PassGuard-main
 
-### Data Protection
-- **No Data Storage**: Passwords are never stored or transmitted to our servers
-- **Client-Side Processing**: All password analysis happens in your browser
-- **Secure API Calls**: Breach checking uses SHA-1 hashing with k-anonymity
-- **HTTPS Required**: Breach checking only works over secure connections
-
-### Third-Party Services
-- **zxcvbn**: Dropbox's password strength estimation library
-- **HaveIBeenPwned API**: Troy Hunt's breach detection service
-- **Google Fonts**: Inter font family for typography
-- **Font Awesome**: Icons for UI elements
-
-## 🎯 How to Use
-
-### Basic Password Checking
-1. Type your password in the input field
-2. Watch the real-time strength meter update
-3. Review suggestions for improvement
-4. Check for breach warnings
-
-### Password Builder (Q&A)
+# Open index.html in your browser
 1. Click "Start Password Builder"
 2. Answer 7 personalized questions about:
    - Favorite places
