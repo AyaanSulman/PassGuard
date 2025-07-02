@@ -235,46 +235,46 @@ class PassGuard {
     initializeQnA() {
         this.questions = [
             {
-                id: 'favorite_place',
-                question: '🏖️ What\'s your favorite place or dream destination?',
+                id: 'user_name',
+                question: '👤 What\'s your first name or nickname?',
                 type: 'text',
-                placeholder: 'e.g., Paris, Beach, Mountains...'
+                placeholder: 'e.g., Alex, Sam, Johnny...'
             },
             {
-                id: 'favorite_number',
-                question: '🔢 Do you have a favorite number or lucky number?',
+                id: 'favorite_anime',
+                question: '🎌 What\'s your favorite anime or manga?',
                 type: 'text',
-                placeholder: 'e.g., 7, 42, 2024...'
+                placeholder: 'e.g., Naruto, One Piece, Attack on Titan...'
+            },
+            {
+                id: 'favorite_superhero',
+                question: '🦸 Who\'s your favorite superhero?',
+                type: 'options',
+                options: ['Batman', 'Superman', 'Spider-Man', 'Wonder Woman', 'Iron Man', 'Captain America', 'Thor', 'Hulk', 'Flash', 'Other']
             },
             {
                 id: 'pet_name',
-                question: '🐕 What\'s the name of a pet (current or childhood)?',
+                question: '🐕 What\'s your pet\'s name (or a pet you\'d like to have)?',
                 type: 'text',
-                placeholder: 'e.g., Buddy, Whiskers, Rex...'
+                placeholder: 'e.g., Buddy, Luna, Max, Bella...'
             },
             {
-                id: 'hobby',
-                question: '🎨 What\'s one of your favorite hobbies?',
-                type: 'options',
-                options: ['Reading', 'Gaming', 'Cooking', 'Sports', 'Music', 'Art', 'Travel', 'Other']
+                id: 'lucky_number',
+                question: '🔢 What\'s your lucky number or favorite number?',
+                type: 'text',
+                placeholder: 'e.g., 7, 13, 42, 99...'
             },
             {
                 id: 'birth_year',
-                question: '📅 What year were you born? (We\'ll modify it for security)',
+                question: '📅 What year were you born? (We\'ll scramble it for security)',
                 type: 'text',
-                placeholder: 'e.g., 1990, 1985...'
+                placeholder: 'e.g., 1995, 2000, 1988...'
             },
             {
-                id: 'favorite_color',
-                question: '🌈 What\'s your favorite color?',
-                type: 'options',
-                options: ['Red', 'Blue', 'Green', 'Purple', 'Orange', 'Yellow', 'Pink', 'Black', 'White']
-            },
-            {
-                id: 'memorable_word',
-                question: '💭 Think of a word that\'s meaningful to you',
+                id: 'favorite_food',
+                question: '🍕 What\'s your favorite food or snack?',
                 type: 'text',
-                placeholder: 'e.g., Freedom, Adventure, Family...'
+                placeholder: 'e.g., Pizza, Sushi, Chocolate...'
             }
         ];
     }
@@ -390,79 +390,225 @@ class PassGuard {
 
     generatePersonalizedPassword() {
         const components = [];
-        const symbols = ['!', '@', '#', '$', '%', '&', '*'];
+        const symbols = ['!', '@', '#', '$', '%', '&', '*', '+', '=', '?'];
+        const separators = ['_', '-', '.'];
         
-        // Extract meaningful components from answers
+        // Extract and process components from answers
         Object.entries(this.qnaAnswers).forEach(([key, value]) => {
             if (value && value.trim()) {
                 switch (key) {
-                    case 'favorite_place':
-                        components.push(this.capitalizeFirst(value.trim().replace(/\s+/g, '')));
+                    case 'user_name':
+                        // Use first 3-4 letters of name, capitalize first letter
+                        const name = value.trim().replace(/\s+/g, '');
+                        components.push(this.capitalizeFirst(name.substring(0, Math.min(4, name.length))));
                         break;
-                    case 'favorite_number':
-                        components.push(value.toString());
+                    case 'favorite_anime':
+                        // Take first word or abbreviation
+                        const anime = value.trim().split(' ')[0];
+                        components.push(this.capitalizeFirst(anime.substring(0, Math.min(5, anime.length))));
+                        break;
+                    case 'favorite_superhero':
+                        // Use abbreviation or short form
+                        const hero = value.trim();
+                        if (hero.includes('-')) {
+                            // For Spider-Man, etc.
+                            components.push(hero.split('-').map(part => part[0]).join('').toUpperCase());
+                        } else {
+                            components.push(hero.substring(0, Math.min(4, hero.length)));
+                        }
                         break;
                     case 'pet_name':
-                        components.push(this.capitalizeFirst(value.trim()));
+                        components.push(this.capitalizeFirst(value.trim().substring(0, Math.min(5, value.trim().length))));
                         break;
-                    case 'hobby':
-                        components.push(value.substring(0, 3).toLowerCase());
+                    case 'lucky_number':
+                        components.push(value.toString());
                         break;
                     case 'birth_year':
-                        // Modify birth year for security (reverse it)
+                        // Scramble birth year for security
                         const year = value.toString();
-                        components.push(year.split('').reverse().join(''));
+                        const scrambled = year.split('').sort(() => Math.random() - 0.5).join('');
+                        components.push(scrambled);
                         break;
-                    case 'favorite_color':
-                        components.push(value.substring(0, 2).toUpperCase());
-                        break;
-                    case 'memorable_word':
-                        components.push(this.capitalizeFirst(value.trim()));
+                    case 'favorite_food':
+                        const food = value.trim().replace(/\s+/g, '');
+                        components.push(this.capitalizeFirst(food.substring(0, Math.min(4, food.length))));
                         break;
                 }
             }
         });
 
-        // Add random symbol
+        // Add complexity elements
         components.push(symbols[Math.floor(Math.random() * symbols.length)]);
+        components.push(Math.floor(Math.random() * 999).toString().padStart(2, '0'));
         
-        // Add random number
-        components.push(Math.floor(Math.random() * 99).toString().padStart(2, '0'));
-
-        // Shuffle components
-        for (let i = components.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [components[i], components[j]] = [components[j], components[i]];
-        }
-
-        const password = components.join('');
+        // Add a separator for readability
+        const separator = separators[Math.floor(Math.random() * separators.length)];
         
-        // Show generated password
-        this.showGeneratedPassword(password);
+        // Create multiple password variations
+        const passwords = this.createPasswordVariations(components, separator, symbols);
+        
+        // Show generated passwords
+        this.showGeneratedPasswords(passwords);
+    }
+
+    createPasswordVariations(components, separator, symbols) {
+        const variations = [];
+        
+        // Variation 1: Simple concatenation with symbol at end
+        const simple = components.join('') + symbols[Math.floor(Math.random() * symbols.length)];
+        variations.push({
+            password: simple,
+            description: 'Simple combination of your personal elements'
+        });
+        
+        // Variation 2: Separated with random separator
+        const separated = components.join(separator) + symbols[Math.floor(Math.random() * symbols.length)];
+        variations.push({
+            password: separated,
+            description: 'Separated format for better readability'
+        });
+        
+        // Variation 3: Mixed case with numbers interspersed
+        const mixed = this.createMixedCasePassword(components, symbols);
+        variations.push({
+            password: mixed,
+            description: 'Mixed case with enhanced security'
+        });
+        
+        // Variation 4: Leetspeak version
+        const leetspeak = this.createLeetspeakPassword(components, symbols);
+        variations.push({
+            password: leetspeak,
+            description: 'Leetspeak version (replaces some letters with numbers)'
+        });
+        
+        return variations;
+    }
+    
+    createMixedCasePassword(components, symbols) {
+        let password = '';
+        components.forEach((component, index) => {
+            if (index % 2 === 0) {
+                password += component.toLowerCase();
+            } else {
+                password += component.toUpperCase();
+            }
+            if (index < components.length - 1) {
+                password += Math.floor(Math.random() * 10);
+            }
+        });
+        return password + symbols[Math.floor(Math.random() * symbols.length)];
+    }
+    
+    createLeetspeakPassword(components, symbols) {
+        const leetMap = {
+            'a': '4', 'e': '3', 'i': '1', 'o': '0', 's': '5', 't': '7', 'l': '1'
+        };
+        
+        let password = components.join('');
+        Object.entries(leetMap).forEach(([letter, number]) => {
+            password = password.replace(new RegExp(letter, 'gi'), number);
+        });
+        
+        return password + symbols[Math.floor(Math.random() * symbols.length)];
     }
 
     capitalizeFirst(str) {
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
 
-    showGeneratedPassword(password) {
+    showGeneratedPasswords(passwords) {
         const generatedPasswordDiv = document.getElementById('generatedPassword');
         const resultPasswordInput = document.getElementById('resultPassword');
         const passwordExplanation = document.getElementById('passwordExplanation');
 
-        resultPasswordInput.value = password;
+        // Create a container for multiple password options
+        let passwordOptionsHTML = '<div class="password-options">';
+        
+        passwords.forEach((passObj, index) => {
+            const isSelected = index === 0 ? 'selected' : '';
+            passwordOptionsHTML += `
+                <div class="password-option ${isSelected}" data-password="${passObj.password}" data-description="${passObj.description}">
+                    <div class="password-display">
+                        <input type="text" value="${passObj.password}" readonly class="password-option-input">
+                        <button class="btn-copy-option" onclick="passGuard.copyPasswordOption('${passObj.password}')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="password-option-description">${passObj.description}</p>
+                    <div class="password-strength-preview" id="strength-preview-${index}"></div>
+                </div>
+            `;
+        });
+        
+        passwordOptionsHTML += '</div>';
+        
+        // Update the generated password section
+        const newHTML = `
+            <h3>🎉 Your personalized password options:</h3>
+            ${passwordOptionsHTML}
+            <div class="password-selection">
+                <p>Click on any password to select it, then test its strength!</p>
+                <button class="btn btn-primary" id="testSelectedPassword">Test Selected Password</button>
+            </div>
+        `;
+        
+        generatedPasswordDiv.innerHTML = newHTML;
+        
+        // Set the first password as default
+        resultPasswordInput.value = passwords[0].password;
         
         // Create explanation
         const explanationParts = [];
-        if (this.qnaAnswers.favorite_place) explanationParts.push('your favorite place');
+        if (this.qnaAnswers.user_name) explanationParts.push('your name');
+        if (this.qnaAnswers.favorite_anime) explanationParts.push('your favorite anime');
+        if (this.qnaAnswers.favorite_superhero) explanationParts.push('your favorite superhero');
         if (this.qnaAnswers.pet_name) explanationParts.push('your pet\'s name');
-        if (this.qnaAnswers.memorable_word) explanationParts.push('your meaningful word');
-        if (this.qnaAnswers.hobby) explanationParts.push('your hobby');
+        if (this.qnaAnswers.favorite_food) explanationParts.push('your favorite food');
         
-        passwordExplanation.textContent = `This password combines ${explanationParts.join(', ')}, modified numbers, and symbols to create something both secure and memorable for you.`;
+        passwordExplanation.textContent = `These passwords combine ${explanationParts.join(', ')}, scrambled numbers, and symbols to create something both secure and memorable for you.`;
+        
+        // Add click handlers for password options
+        document.querySelectorAll('.password-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.password-option').forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                resultPasswordInput.value = option.dataset.password;
+            });
+        });
+        
+        // Add handler for test button
+        document.getElementById('testSelectedPassword').addEventListener('click', () => {
+            this.testGeneratedPassword();
+        });
+        
+        // Show strength preview for each password
+        passwords.forEach((passObj, index) => {
+            if (typeof zxcvbn !== 'undefined') {
+                const result = zxcvbn(passObj.password);
+                const strengthPreview = document.getElementById(`strength-preview-${index}`);
+                const strengthLevels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+                const strengthColors = ['#ef4444', '#ff6b6b', '#f59e0b', '#4ecdc4', '#10b981'];
+                
+                strengthPreview.innerHTML = `
+                    <div class="mini-strength-bar" style="background: ${strengthColors[result.score]}; width: ${((result.score + 1) / 5) * 100}%"></div>
+                    <span class="mini-strength-label" style="color: ${strengthColors[result.score]}">${strengthLevels[result.score]}</span>
+                `;
+            }
+        });
         
         generatedPasswordDiv.style.display = 'block';
         generatedPasswordDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    copyPasswordOption(password) {
+        navigator.clipboard.writeText(password).then(() => {
+            // Show success feedback
+            const event = new CustomEvent('passwordCopied');
+            document.dispatchEvent(event);
+        }).catch(err => {
+            console.error('Failed to copy password:', err);
+        });
     }
 
     async copyToClipboard() {
